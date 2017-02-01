@@ -55,6 +55,8 @@ function populateLayer(layer)
   end
 end
 
+populateLayer(layer)
+
 -- helper function to set a tile in the layer based on x,y coordinates
 function setTile(layer, x, y, tile_id)
   layer.data[x + y * layer.width + 1] = tile_id -- +1 because 0 is reserved in Tiled for no-tile
@@ -65,9 +67,6 @@ function getTileID(tileset, x, y)
   local width = tileset.imagewidth / tileset.tilewidth
   return x + y * width + 1 -- +1 because 0 is reserved in Tiled for no-tile
 end
-
-local layer = map.layers[1]
-populateLayer(layer)
 
 setTile(layer, 0, 0, getTileID(tileset, 30, 0))
 setTile(layer, 1, 0, getTileID(tileset, 31, 0))
