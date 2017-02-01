@@ -57,26 +57,26 @@ end
 
 -- helper function to set a tile in the layer based on x,y coordinates
 function setTile(layer, x, y, tile_id)
-  layer.data[x + y * layer.width] = tile_id
+  layer.data[x + y * layer.width + 1] = tile_id -- +1 because 0 is reserved in Tiled for no-tile
 end
 
 -- helper function to get the ID of a tile from the tileset using x,y coordinates
 function getTileID(tileset, x, y)
   local width = tileset.imagewidth / tileset.tilewidth
-  return x + y * width
+  return x + y * width + 1 -- +1 because 0 is reserved in Tiled for no-tile
 end
 
 local layer = map.layers[1]
 populateLayer(layer)
 
-setTile(layer, 1, 1, getTileID(tileset, 31, 0))
-setTile(layer, 2, 1, getTileID(tileset, 32, 0))
-setTile(layer, 1, 2, getTileID(tileset, 31, 1))
-setTile(layer, 2, 2, getTileID(tileset, 32, 1))
-setTile(layer, 1, 3, getTileID(tileset, 31, 2))
-setTile(layer, 2, 3, getTileID(tileset, 32, 2))
-setTile(layer, 1, 4, getTileID(tileset, 31, 3))
-setTile(layer, 2, 4, getTileID(tileset, 32, 3))
+setTile(layer, 0, 0, getTileID(tileset, 30, 0))
+setTile(layer, 1, 0, getTileID(tileset, 31, 0))
+setTile(layer, 0, 1, getTileID(tileset, 30, 1))
+setTile(layer, 1, 1, getTileID(tileset, 31, 1))
+setTile(layer, 0, 2, getTileID(tileset, 30, 2))
+setTile(layer, 1, 2, getTileID(tileset, 31, 2))
+setTile(layer, 0, 3, getTileID(tileset, 30, 3))
+setTile(layer, 1, 3, getTileID(tileset, 31, 3))
 
 local tileMap = sti(map)
 local w, h = tileMap.tilewidth * tileMap.width, tileMap.tileheight * tileMap.height
