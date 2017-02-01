@@ -38,7 +38,7 @@ local tileset = {
   tileheight = 32,
   spacing = 0,
   margin = 0,
-  image = "assets/terrain_atlas.png",
+  image = "terrain_atlas.png",
   imagewidth = 1024,
   imageheight = 1024,
   tileoffset = {x = 0, y = 0},
