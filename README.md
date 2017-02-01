@@ -97,7 +97,7 @@ populateLayer(layer)
 
  The thing that makes this a little tricky is that the Tiled format stores the layer data in a flat 1-dimensional array instead of a 2-dimensional array with x and y coordinates. So instead of looping through an `x` variable from 1 to the width and a `y` variable from 1 to the height, we just need a single index that runs from 1 to the total number of tiles (`width * height`).
 
- ## Draw a tree in the layer
+## Draw a tree in the layer
 
  In the LPC tilesheet, there is a tree from the top-left coordinate of (30, 0) to the bottom-right coordinate of (31, 3), assuming a coordinate system that starts at (0, 0). Here, we add each of the 8 tree tiles to the layer:
 
