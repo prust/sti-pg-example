@@ -69,14 +69,14 @@ end
 local layer = map.layers[1]
 populateLayer(layer)
 
-setTile(layer, 3, 3, getTileID(tileset, 31, 0))
-setTile(layer, 4, 3, getTileID(tileset, 32, 0))
-setTile(layer, 3, 4, getTileID(tileset, 31, 1))
-setTile(layer, 4, 4, getTileID(tileset, 32, 1))
-setTile(layer, 3, 5, getTileID(tileset, 31, 2))
-setTile(layer, 4, 5, getTileID(tileset, 32, 2))
-setTile(layer, 3, 6, getTileID(tileset, 31, 3))
-setTile(layer, 4, 6, getTileID(tileset, 32, 3))
+setTile(layer, 1, 1, getTileID(tileset, 31, 0))
+setTile(layer, 2, 1, getTileID(tileset, 32, 0))
+setTile(layer, 1, 2, getTileID(tileset, 31, 1))
+setTile(layer, 2, 2, getTileID(tileset, 32, 1))
+setTile(layer, 1, 3, getTileID(tileset, 31, 2))
+setTile(layer, 2, 3, getTileID(tileset, 32, 2))
+setTile(layer, 1, 4, getTileID(tileset, 31, 3))
+setTile(layer, 2, 4, getTileID(tileset, 32, 3))
 
 local tileMap = sti(map)
 local w, h = tileMap.tilewidth * tileMap.width, tileMap.tileheight * tileMap.height
