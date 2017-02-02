@@ -104,13 +104,13 @@ populateLayer(layer)
 ```lua
 -- helper function to set a tile in the layer based on x,y coordinates
 function setTile(layer, x, y, tile_id)
-  layer.data[x + y * layer.width + 1] = tile_id -- +1 because 0 is reserved in Tiled for no-tile
+  layer.data[x + y * layer.width + 1] = tile_id -- +1 because tables in Lua are 1-based
 end
 
 -- helper function to get the ID of a tile from the tileset using x,y coordinates
 function getTileID(tileset, x, y)
   local width = tileset.imagewidth / tileset.tilewidth
-  return x + y * width + 1 -- +1 because 0 is reserved in Tiled for no-tile
+  return x + y * width + 1 -- +1 because Tile ID 0 represents an empty tile
 end
 
 setTile(layer, 0, 0, getTileID(tileset, 30, 0))
