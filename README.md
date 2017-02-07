@@ -130,7 +130,7 @@ end
 
 Note that `setTile()` uses the same `x + y * width + 1` formula to convert from (x,y) space to Tiled's 1-dimensional array (`+ 1` because Lua arrays are 1-based).
 
-Now, after we add in some LÖVE and STI boilerplate (you can find this in the main.lua file), and we can see our path:
+Add in some LÖVE and STI boilerplate (you can find this in the main.lua file), and we can see our path:
 
 ![path example](example-path.png)
 
