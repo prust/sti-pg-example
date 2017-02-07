@@ -160,4 +160,4 @@ Here's an updated screenshot with the tree:
 
 ## Afterword
 
-I hope the above example made the Tiled Lua format clearer and more approachable. While it is certainly possible to ignore this format and the STI library and to instead create your own table format for procedurally-generated terrain, there are advantages to using the STI library, since has become a bit of a standard in the LÖVE community and many libraries, tutorials and example code use it or interoperate well with it.
+I hope the above example made the Tiled Lua format clearer and more approachable. While it is certainly possible to ignore this format and the STI library and to instead create your own table format for procedurally-generated terrain, there are advantages to using the STI library, since it has become a bit of a standard in the LÖVE community and many libraries, tutorials and example code use it or interoperate well with it.
