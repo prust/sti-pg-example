@@ -1,4 +1,4 @@
-# STI Programmatic Generation Example
+# STI Programmatic Generation Tutorial
 
 This repository provides an example of programmatically generating Tiled-format maps in the Lua (`.lua`) format and using this with the STI ([Simple Tiled Implementation](https://github.com/karai17/Simple-Tiled-Implementation)) library. My aim is to demystify the Tiled format and to encourage others to use STI when doing procedural generation (i.e. generating random maps for roguelike or sandbox/open world games). This code doesn't get into true procedural generation, but it should serve as a decent starting point for that. It depends on the ability to pass a map table into STI directly, which was added in `v0.16.0.4`.
 
