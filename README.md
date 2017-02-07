@@ -1,12 +1,10 @@
 # STI Procedural Generation Example
 
-This repository provides an example of procedurally-generating Tiled-format maps in the Lua (`.lua`) format. My aim is to demystify the Tiled format and to encourage the use of STI by those doing procedural generation (for instance, generating random maps for roguelike games or sandbox/open world games). This code depends on the ability to pass a map table into STI directly, which was added in `v0.16.0.4`.
-
-The lua map tables generated will probably work with most Lua frameworks, but I've only tested with the STI ([Simple Tiled Implementation](https://github.com/karai17/Simple-Tiled-Implementation)) library, which is the most popular Tiled library for [the LÖVE framework](https://love2d.org/).
+This repository provides an example of procedurally-generating Tiled-format maps in the Lua (`.lua`) format and using this with the STI ([Simple Tiled Implementation](https://github.com/karai17/Simple-Tiled-Implementation)) library. My aim is to demystify the Tiled format and to encourage others to use STI when doing procedural generation (i.e. generating random maps for roguelike or sandbox/open world games). This code depends on the ability to pass a map table into STI directly, which was added in `v0.16.0.4`.
 
 ## Creating the map table
 
-The first step is to create a table for your overall map:
+The first step is to create a table for your map:
 
 ```lua
 -- create a new orthogonal map that is 64x64 tiles, each tile is 32x32 pixels
@@ -21,13 +19,11 @@ local map = {
 }
 ```
 
-I set the orientation to `orthogonal`, which is the default (a typical top-down view). The other options are isometric and hexagonal, I'm not sure if those are the exact strings but I would guess that they are (warning: I haven't used isometric or hexagonal maps before, so I don't know if they will work well with the standard x,y coordinate system I'm using in the helper functions below).
-
-Also notice that I created placeholders for tilesets and layers and setup the dimensions of the map (in "tile" units -- the number of tiles across & number of tiles high) as well as the dimensions of each individual tile (in pixels).
+I set the orientation to `orthogonal` (a typical top-down view). Notice that I create placeholders for tilesets and layers and setup the dimensions (in "tile" units -- the number of tiles across & number of tiles high) and also include pixel-dimensions of individual tiles.
 
 ## Creating a tileset
 
-In order for a map to have graphics to display, we need to add a tileset. This is based on a single image, usually a PNG, that has the images for each type of tile in it:
+In order for a map to display graphics, we need to reference a tileset. Each tileset image is a single image, usually a PNG, with all the tile images in it:
 
 ```lua
 -- create a tileset from an image (Liberated Pixel Cup terrain_atlas.png from opengameart.org)
@@ -48,15 +44,13 @@ local tileset = {
 table.insert(map.tilesets, tileset)
 ```
 
-You'll notice I'm using a 32x32 tileset from the (excellent) [Liberated Pixel Cup](http://lpc.opengameart.org/) that I found on opengameart.org (search for "LPC" and you'll find a lot of compatible 32x32 open-source art).
-
-The `tilecount` in my example just happens to match the `imagewidth` and `imageheight`, but that's a coincidence due to the fact that my tiles are 32x32 pixels and the tilesheet happens to be 32 tiles x 32 tiles.
+This is a 32x32 tileset from the (excellent) [Liberated Pixel Cup](http://lpc.opengameart.org/) on opengameart.org. The `tilecount` in my example happens to match the `imagewidth` and `imageheight`, but this isn't necessary.
 
 Aside: in the Tiled format, I think the `spacing` and `margin` values are not completely independent of each-other. I could be wrong, but I think I recall being surprised that one includes the other.
 
-## Creating a layer of your map
+## Creating a map layer
 
-Tiled maps are made up of layers, which are drawn in order. For this example, we'll just create one layer (later we'll draw a tree on it):
+Tiled maps are made up of layers, which are drawn in order. For this tutorial, we'll create a few layers, so we can layer things on top of each-other:
 
 ```lua
 -- create a layer of the map, with the same height/width as the map
@@ -82,7 +76,7 @@ end
 local layer = addLayer(map, "grass")
 ```
 
-I don't think the name is strictly necessary, but it may be helpful later on. All the data here is pretty much boilerplate -- matching the map data.
+I don't think the name is strictly necessary, but it may be helpful later on. All the data here is pretty much boilerplate & matches the map data.
 
 ## Pre-populating the layer with grass tiles
 
@@ -136,7 +130,7 @@ end
 
 Note that `setTile()` uses the same `x + y * width + 1` formula to convert from (x,y) space to Tiled's 1-dimensional array (`+ 1` because Lua arrays are 1-based).
 
-Now, after we add in some LÖVE and STI boilerplate (you can see this in the main.lua file), we can see our path:
+Now, after we add in some LÖVE and STI boilerplate (you can find this in the main.lua file), and we can see our path:
 
 ![path example](example-path.png)
 
