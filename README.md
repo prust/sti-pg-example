@@ -123,7 +123,11 @@ setTile(layer, 0, 3, getTileID(tileset, 30, 3))
 setTile(layer, 1, 3, getTileID(tileset, 31, 3))
 ```
 
-This is where things get a little complicated. I find it much easier to work in (x,y) coordinate space, but the Tiled format prefers flat arrays (they are more compact and more performant). So instead of being referenced by x,y, Tiled uses an incrementing TileID which can be calculated by adding the `x` coordinate to the number of tiles in the above rows and adding 1. The reason we have to add `1` is because Tiled reserves `0` for the empty tile.
+This is where things get a bit complicated. I find it easier to work in (x,y) coordinate space, but the Tiled format "unrolls" the the two dimensions onto a one-dimensional array like this:
+
+![Tiled unrolls two dimensions onto one](unrolling.png)
+
+This one-dimensional array is compact and memory efficient, but it means that we can't reference tiles by their x,y coordinates directly. Instead, we need to calculate the index in the one-dimensional array by adding the `x` coordinate to the number of tiles in the above rows and adding 1 (`x + y * width + 1`). We have to add one (`+ 1`) to Tile IDs because the 0 Tile ID represents an empty tile, and we have to add one when calculating array indexes because Lua arrays are 1-based.
 
 Once we have the TileID, we need to set the tile into the layer, but again, we have to convert from our desired x,y coordinates to Tiled's 1-dimensional array index, which the `setTile()` helper function does for us.
 
