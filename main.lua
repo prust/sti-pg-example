@@ -31,35 +31,32 @@ local tileset = {
 table.insert(map.tilesets, tileset)
 
 -- create a layer of the map, with the same height/width as the map
-local layer = {
-  type = "tilelayer",
-  name = "",
-  x = 0,
-  y = 0,
-  width = 64,
-  height = 64,
-  visible = true,
-  opacity = 1,
-  offsetx = 0,
-  offsety = 0,
-  properties = {},
-  encoding = "lua",
-  data = {}
-}
-table.insert(map.layers, layer)
-
--- populate the layer with empty tiles
-function populateLayer(layer)
-  for i=1, layer.width * layer.height do
-    table.insert(layer.data, 0)
-  end
+function addLayer(map, name)
+  local layer = {
+    type = "tilelayer",
+    name = name,
+    x = 0,
+    y = 0,
+    width = 64,
+    height = 64,
+    visible = true,
+    opacity = 1,
+    offsetx = 0,
+    offsety = 0,
+    properties = {},
+    encoding = "lua",
+    data = {}
+  }
+  table.insert(map.layers, layer)
+  return layer
 end
+local layer = addLayer(map, "grass")
 
-populateLayer(layer)
-
--- helper function to set a tile in the layer based on x,y coordinates
-function setTile(layer, x, y, tile_id)
-  layer.data[x + y * layer.width + 1] = tile_id -- +1 because Tile ID 0 represents an empty tile
+-- populate the layer with a default tile ID
+function populateLayer(layer, tile_id)
+  for i=1, layer.width * layer.height do
+    table.insert(layer.data, tile_id)
+  end
 end
 
 -- helper function to get the ID of a tile from the tileset using x,y coordinates
@@ -68,14 +65,38 @@ function getTileID(tileset, x, y)
   return x + y * width + 1 -- +1 because Tile ID 0 represents an empty tile
 end
 
-setTile(layer, 0, 0, getTileID(tileset, 30, 0))
-setTile(layer, 1, 0, getTileID(tileset, 31, 0))
-setTile(layer, 0, 1, getTileID(tileset, 30, 1))
-setTile(layer, 1, 1, getTileID(tileset, 31, 1))
-setTile(layer, 0, 2, getTileID(tileset, 30, 2))
-setTile(layer, 1, 2, getTileID(tileset, 31, 2))
-setTile(layer, 0, 3, getTileID(tileset, 30, 3))
-setTile(layer, 1, 3, getTileID(tileset, 31, 3))
+-- create a grass background layer
+local grass_tile_id = getTileID(tileset, 22, 3)
+populateLayer(layer, grass_tile_id)
+
+-- helper function to set a tile in the layer based on x,y coordinates
+function setTile(layer, x, y, tile_id)
+  layer.data[x + y * layer.width + 1] = tile_id -- +1 because Tile ID 0 represents an empty tile
+end
+
+-- create a layer for the path
+local path_layer = addLayer(map, "path")
+populateLayer(path_layer, 0)
+
+for x=0, path_layer.width - 1 do
+  setTile(path_layer, x, 5, getTileID(tileset, 19, 2))
+  setTile(path_layer, x, 6, getTileID(tileset, 19, 3))
+  setTile(path_layer, x, 7, getTileID(tileset, 19, 4))
+end
+
+-- create a layer for objects like
+local objects_layer = addLayer(map, "objects")
+populateLayer(objects_layer, 0)
+setTile(objects_layer, 1, 1, getTileID(tileset, 30, 0))
+setTile(objects_layer, 2, 1, getTileID(tileset, 31, 0))
+setTile(objects_layer, 1, 2, getTileID(tileset, 30, 1))
+setTile(objects_layer, 2, 2, getTileID(tileset, 31, 1))
+setTile(objects_layer, 1, 3, getTileID(tileset, 30, 2))
+setTile(objects_layer, 2, 3, getTileID(tileset, 31, 2))
+setTile(objects_layer, 1, 4, getTileID(tileset, 30, 3))
+setTile(objects_layer, 2, 4, getTileID(tileset, 31, 3))
+setTile(objects_layer, 1, 5, getTileID(tileset, 30, 4))
+setTile(objects_layer, 2, 5, getTileID(tileset, 31, 4))
 
 local tileMap = sti(map)
 local w, h = tileMap.tilewidth * tileMap.width, tileMap.tileheight * tileMap.height

@@ -60,51 +60,40 @@ Tiled maps are made up of layers, which are drawn in order. For this example, we
 
 ```lua
 -- create a layer of the map, with the same height/width as the map
-local layer = {
-  type = "tilelayer",
-  name = "",
-  x = 0,
-  y = 0,
-  width = 64,
-  height = 64,
-  visible = true,
-  opacity = 1,
-  offsetx = 0,
-  offsety = 0,
-  properties = {},
-  encoding = "lua",
-  data = {}
-}
-table.insert(map.layers, layer)
-```
-
-I didn't provide a name for my layer, but you may want to do that. All the data here is pretty much boilerplate -- matching the map data. If you're making a lot of layers, you'll probably want to write a function that auto-generates this for you.
-
-## Pre-populating the layer with empty tiles
-
-In the Tiled format a `0` represents an empty tile. The format seems to require that the entire layer be populated, so in some cases it's easiest to just pre-populate the whole layer with empty tiles:
-
-```lua
--- populate the layer with empty tiles
-function populateLayer(layer)
-  for i=1, layer.width * layer.height do
-    table.insert(layer.data, 0)
-  end
+function addLayer(map, name)
+  local layer = {
+    type = "tilelayer",
+    name = name,
+    x = 0,
+    y = 0,
+    width = 64,
+    height = 64,
+    visible = true,
+    opacity = 1,
+    offsetx = 0,
+    offsety = 0,
+    properties = {},
+    encoding = "lua",
+    data = {}
+  }
+  table.insert(map.layers, layer)
+  return layer
 end
-
-populateLayer(layer)
+local layer = addLayer(map, "grass")
 ```
 
- The thing that makes this a little tricky is that the Tiled format stores the layer data in a flat 1-dimensional array instead of a 2-dimensional array with x and y coordinates. So instead of looping through an `x` variable from 1 to the width and a `y` variable from 1 to the height, we just need a single index that runs from 1 to the total number of tiles (`width * height`).
+I don't think the name is strictly necessary, but it may be helpful later on. All the data here is pretty much boilerplate -- matching the map data.
 
-## Draw a tree in the layer
+## Pre-populating the layer with grass tiles
 
- In the LPC tilesheet, there is a tree from the top-left coordinate of (30, 0) to the bottom-right coordinate of (31, 3), assuming a coordinate system that starts at (0, 0). Here, we add each of the 8 tree tiles to the layer:
+In the Tiled format a `0` represents an empty tile. The format seems to require that the entire layer be populated, so in some cases it's easiest to just pre-populate the whole layer with empty tiles or -- in our case -- with a grass tile:
 
 ```lua
--- helper function to set a tile in the layer based on x,y coordinates
-function setTile(layer, x, y, tile_id)
-  layer.data[x + y * layer.width + 1] = tile_id -- +1 because tables in Lua are 1-based
+-- populate the layer with a default tile ID
+function populateLayer(layer, tile_id)
+  for i=1, layer.width * layer.height do
+    table.insert(layer.data, tile_id)
+  end
 end
 
 -- helper function to get the ID of a tile from the tileset using x,y coordinates
@@ -113,27 +102,67 @@ function getTileID(tileset, x, y)
   return x + y * width + 1 -- +1 because Tile ID 0 represents an empty tile
 end
 
-setTile(layer, 0, 0, getTileID(tileset, 30, 0))
-setTile(layer, 1, 0, getTileID(tileset, 31, 0))
-setTile(layer, 0, 1, getTileID(tileset, 30, 1))
-setTile(layer, 1, 1, getTileID(tileset, 31, 1))
-setTile(layer, 0, 2, getTileID(tileset, 30, 2))
-setTile(layer, 1, 2, getTileID(tileset, 31, 2))
-setTile(layer, 0, 3, getTileID(tileset, 30, 3))
-setTile(layer, 1, 3, getTileID(tileset, 31, 3))
+-- create a grass background layer
+local grass_tile_id = getTileID(tileset, 22, 3)
+populateLayer(layer, grass_tile_id)
 ```
 
-This is where things get a bit complicated. I find it easier to work in (x,y) coordinate space, but the Tiled format "unrolls" the two dimensions onto a one-dimensional array like this:
+ The thing that makes this a little tricky is that the Tiled format "unrolls" 2-dimensional layer data onto a flat 1-dimensional array:
 
 ![Tiled unrolls two dimensions onto one](unrolling.png)
 
-This one-dimensional array is compact and memory efficient, but it means that we can't reference tiles easily by their x,y coordinates. Instead, we need to calculate the index in the one-dimensional array by adding the `x` coordinate to the number of tiles in the above rows and adding 1 (`x + y * width + 1`). The `+ 1` is because both Tile IDs and Lua arrays are 1-based (the 0 Tile ID is reserved to represent an empty tile).
+This one-dimensional array is compact and memory efficient, but it means that we can't reference tiles easily by their x,y coordinates. Instead, we need to calculate the index in the 1-D array with the formula `x + y * width + 1`. The `+ 1` is because Tile IDs are 1-based (the 0 Tile ID is reserved to represent an empty tile).
 
-Once we have the TileID, we need to set the tile into the layer, but again, we have to convert from our desired x,y coordinates to Tiled's 1-dimensional array index, which the `setTile()` helper function does for us.
+## Draw a path in a new layer
 
-Now, after we add in the typical LÖVE and STI boilerplate (you can see this in the main.lua file), we can see our tree:
+In the LPC tilesheet, there are path tiles from coordinates (18,2) to (20,4). We want a path that stretches horizontally across our map, so we'll just take the middle column of path tiles (19,2) to (19,4):
 
-![tree example](example-result.png)
+```lua
+-- helper function to set a tile in the layer based on x,y coordinates
+function setTile(layer, x, y, tile_id)
+  layer.data[x + y * layer.width + 1] = tile_id -- +1 because Tile ID 0 represents an empty tile
+end
+
+-- create a layer for the path
+local path_layer = addLayer(map, "path")
+populateLayer(path_layer, 0)
+
+for x=0, path_layer.width - 1 do
+  setTile(path_layer, x, 5, getTileID(tileset, 19, 2))
+  setTile(path_layer, x, 6, getTileID(tileset, 19, 3))
+  setTile(path_layer, x, 7, getTileID(tileset, 19, 4))
+end
+```
+
+Note that `setTile()` uses the same `x + y * width + 1` formula to convert from (x,y) space to Tiled's 1-dimensional array (`+ 1` because Lua arrays are 1-based).
+
+Now, after we add in some LÖVE and STI boilerplate (you can see this in the main.lua file), we can see our path:
+
+![path example](example-path.png)
+
+## Draw a tree in a new layer
+
+ In the LPC tilesheet, there is a tree from the top-left coordinate of (30, 0) to the bottom-right coordinate of (31, 4), assuming a coordinate system that starts at (0, 0). Here, we add each of the 8 tree tiles to the layer:
+
+```lua
+-- create a layer for objects like trees
+local objects_layer = addLayer(map, "objects")
+populateLayer(objects_layer, 0)
+setTile(objects_layer, 1, 1, getTileID(tileset, 30, 0))
+setTile(objects_layer, 2, 1, getTileID(tileset, 31, 0))
+setTile(objects_layer, 1, 2, getTileID(tileset, 30, 1))
+setTile(objects_layer, 2, 2, getTileID(tileset, 31, 1))
+setTile(objects_layer, 1, 3, getTileID(tileset, 30, 2))
+setTile(objects_layer, 2, 3, getTileID(tileset, 31, 2))
+setTile(objects_layer, 1, 4, getTileID(tileset, 30, 3))
+setTile(objects_layer, 2, 4, getTileID(tileset, 31, 3))
+setTile(objects_layer, 1, 5, getTileID(tileset, 30, 4))
+setTile(objects_layer, 2, 5, getTileID(tileset, 31, 4))
+```
+
+Here's an updated screenshot with the tree:
+
+![tree example](example-tree.png)
 
 ## Afterword
 
